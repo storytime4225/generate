@@ -6,7 +6,7 @@ import http from "http"
 
 const app = express()
 const port = process.env.PORT || 5050
-const openai = new OpenAI({
+const client = new OpenAI({
   apiKey: process.env['OPENAI_API_KEY']
 });
 const prompt = process.env['PROMPT']
@@ -24,38 +24,21 @@ app.get("/health", function(req,res) {
 })
 
 app.post("/data", (req, res) => {
-    const base64ImageData = req.body.imageData
-    const country = req.body.country
-    processImage(base64ImageData, country).then(response => {
-        console.log(response)
+    processImage().then(response => {
         res.writeHead(200, {"Content-Type":"application/json"})
         res.end("{ \"content\": \"" + response + "\" }")
     })
 })
 
-async function processImage(base64ImageData, country) {
-    const input = "data:image/jpeg;base64," + base64ImageData
-    const fullPrompt = (country == "unknown" ? "" : ("Given my location is " + country + ". ")) + prompt
-    console.log("fullPrompt = " + fullPrompt)
+async function processImage() {
     try {
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [{
-                role: "user",
-                content: [{
-                    type: "text", text: prompt
-                }, {
-                    type: "image_url",
-                    image_url: {
-                        url: input
-                    },
-                }],
-            }],
-            max_tokens: 256
-        })
-        return completion.choices[0].message.content
+        const response = await client.responses.create({
+            model: "o4-mini-2025-04-16",
+            input: "You are a parent that has to make up a nice bedtime story for your child. Generate a story that is about 500 words longs, in a format that is easy to read, like a fairy tale book with a beginning, middle and an end."
+        });
+        return response.output_text
     } catch (error) {
-        console.error("Error processing image:", error)
+        console.error("ERROR:", error)
         throw error
     }
 }
