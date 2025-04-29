@@ -1,4 +1,4 @@
 ---
-Ny Title: Welcome to my blog
+My Title: Welcome to my blog
 ---
 
