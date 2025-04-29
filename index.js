@@ -24,13 +24,13 @@ app.get("/health", function(req,res) {
 })
 
 app.post("/data", (req, res) => {
-    processImage().then(response => {
+    processText().then(response => {
         res.writeHead(200, {"Content-Type":"application/json"})
         res.end("{ \"content\": \"" + response + "\" }")
     })
 })
 
-async function processImage() {
+async function processText() {
     try {
         const response = await client.responses.create({
             model: "o4-mini-2025-04-16",
