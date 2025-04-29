@@ -6,7 +6,7 @@ import http from "http"
 
 const app = express()
 const port = process.env.PORT || 5050
-const client = new OpenAI({
+const openai = new OpenAI({
   apiKey: process.env['OPENAI_API_KEY']
 });
 const prompt = process.env['PROMPT']
@@ -32,11 +32,16 @@ app.post("/data", (req, res) => {
 
 async function processText() {
     try {
-        const response = await client.responses.create({
-            model: "o4-mini-2025-04-16",
-            input: "You are a parent that has to make up a nice bedtime story for your child. Generate a story that is about 500 words longs, in a format that is easy to read, like a fairy tale book with a beginning, middle and an end."
-        });
-        return response.output_text
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [{
+                role: "user",
+                content: [{
+                    type: "text", text: prompt
+                }],
+            }]
+        })
+        return completion.choices[0].message.content
     } catch (error) {
         console.error("ERROR:", error)
         throw error
