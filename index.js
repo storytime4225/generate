@@ -25,7 +25,7 @@ app.get("/health", function(req,res) {
 
 app.post("/data", (req, res) => {
     processText().then(response => {
-        let cleaned = response.replace(/\n/g, "").replace(/"/g, "\"")
+        let cleaned = response.replace(/\n/g, "").replace(/\"/g, "/\"")
         res.writeHead(200, {"Content-Type":"application/json"})
         res.end("{ \"content\": \"" + cleaned + "\" }")
     })
