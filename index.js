@@ -27,7 +27,6 @@ app.post("/data", (req, res) => {
     processText().then(response => {
         let cleaned = response.replace(/\n/g, " ").replace(/"/g, "\\\"")
         let output = "{ \"content\": \"" + cleaned + "\" }"
-        console.log(output)
         res.writeHead(200, {"Content-Type":"application/json"})
         res.end(output)
     })
