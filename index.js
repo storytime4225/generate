@@ -32,6 +32,10 @@ app.post("/data", (req, res) => {
     })
 })
 
+app.post("/data2", (req, res) => {
+    processStream(res)
+})
+
 async function processText() {
     try {
         const completion = await openai.chat.completions.create({
@@ -47,6 +51,26 @@ async function processText() {
     } catch (error) {
         console.error("ERROR:", error)
         throw error
+    }
+}
+
+async function processStream(res) {
+    const stream = await openai.responses.create({
+        model: "gpt-4o-mini",
+        input: [{
+            role: "user",
+            content: prompt
+        }],
+        stream: true
+    })
+    for await (const event of stream) {
+        console.log(event.type)
+        if (event.type === "response.output_text.delta") {
+            res.write("{ \"content\": \"update\" }")
+        }
+        if (event.type === "response.output_text.done") {
+            res.end()
+        }
     }
 }
 
