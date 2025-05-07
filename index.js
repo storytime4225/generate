@@ -63,9 +63,7 @@ async function processStream(res) {
         }],
         stream: true
     })
-    res.setHeader("Content-Type", "text/event-stream")
-    res.setHeader("Cache-Control", "no-cache")
-    res.setHeader("Connection", "keep-alive")
+    res.writeHead(206, {"Content-Type":"text/event-stream", "Cache-Control", "no-cache", "Connection", "keep-alive"})
     for await (const event of stream) {
         console.log(event.type)
         if (event.type === "response.output_text.delta") {
