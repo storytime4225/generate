@@ -69,6 +69,7 @@ async function processStream(res) {
             res.write(event.delta)
         }
         if (event.type === "response.output_text.done") {
+            console.log("finished streaming request")
             res.end()
         }
     }
