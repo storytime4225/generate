@@ -65,9 +65,8 @@ async function processStream(res) {
     })
     res.writeHead(200, { "Content-Type": "text/plain", "Transfer-Encoding": "chunked"})
     for await (const event of stream) {
-        console.log(event.type)
         if (event.type === "response.output_text.delta") {
-            res.write('data: {}')
+            res.write(event.delta)
         }
         if (event.type === "response.output_text.done") {
             res.end()
