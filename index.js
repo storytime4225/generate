@@ -63,11 +63,11 @@ async function processStream(res) {
         }],
         stream: true
     })
-    res.writeHead(200, {"Content-Type":"text/event-stream", "Cache-Control": "no-cache", "Connection": "keep-alive"})
+    res.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", "Connection": "keep-alive"})
     for await (const event of stream) {
         console.log(event.type)
         if (event.type === "response.output_text.delta") {
-            res.write("{ \"content\": \"update\" }")
+            res.write('data: {}')
         }
         if (event.type === "response.output_text.done") {
             res.end()
