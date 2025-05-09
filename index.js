@@ -23,8 +23,16 @@ app.get("/health", function(req,res) {
     res.end()
 })
 
-app.post("/data", (req, res) => {
-    processText().then(response => {
+app.get("/privacy", function(req,res) {
+    res.type('html').send("<html><body><h1>Privacy Policy</h1><p>Information for Henry Heleine Privacy 2025 to follow soon. Contact me by emailing henryheleine86@gmail.com for further information.</p></body></html>")
+})
+
+app.get("/support", function(req,res) {
+    res.type('html').send("<html><body><h1>Support</h1><p>Information for Henry Heleine support to follow soon. Contact me by emailing henryheleine86@gmail.com for further information.</p></body></html>")
+})
+
+app.post("/story", (req, res) => {
+    full().then(response => {
         let cleaned = response.replace(/\n/g, " ").replace(/"/g, "\\\"")
         let output = "{ \"content\": \"" + cleaned + "\" }"
         res.writeHead(200, {"Content-Type":"application/json"})
@@ -32,29 +40,7 @@ app.post("/data", (req, res) => {
     })
 })
 
-app.post("/data2", (req, res) => {
-    processStream(res)
-})
-
-async function processText() {
-    try {
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [{
-                role: "user",
-                content: [{
-                    type: "text", text: prompt
-                }],
-            }]
-        })
-        return completion.choices[0].message.content
-    } catch (error) {
-        console.error("ERROR:", error)
-        throw error
-    }
-}
-
-async function processStream(res) {
+app.post("/stream", (req, res) => {
     const stream = await openai.responses.create({
         model: "gpt-4o-mini",
         input: [{
@@ -72,6 +58,24 @@ async function processStream(res) {
             console.log("finished streaming request")
             res.end()
         }
+    }
+})
+
+async function full() {
+    try {
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [{
+                role: "user",
+                content: [{
+                    type: "text", text: prompt
+                }],
+            }]
+        })
+        return completion.choices[0].message.content
+    } catch (error) {
+        console.error("ERROR:", error)
+        throw error
     }
 }
 
