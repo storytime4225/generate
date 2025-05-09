@@ -32,7 +32,7 @@ app.get("/support", function(req,res) {
 })
 
 app.post("/story", (req, res) => {
-    full().then(response => {
+    processBatch().then(response => {
         let cleaned = response.replace(/\n/g, " ").replace(/"/g, "\\\"")
         let output = "{ \"content\": \"" + cleaned + "\" }"
         res.writeHead(200, {"Content-Type":"application/json"})
@@ -41,27 +41,10 @@ app.post("/story", (req, res) => {
 })
 
 app.post("/stream", (req, res) => {
-    const stream = await openai.responses.create({
-        model: "gpt-4o-mini",
-        input: [{
-            role: "user",
-            content: prompt
-        }],
-        stream: true
-    })
-    res.writeHead(200, { "Content-Type": "text/plain", "Transfer-Encoding": "chunked"})
-    for await (const event of stream) {
-        if (event.type === "response.output_text.delta") {
-            res.write(event.delta)
-        }
-        if (event.type === "response.output_text.done") {
-            console.log("finished streaming request")
-            res.end()
-        }
-    }
+    processStream(res)
 })
 
-async function full() {
+async function processBatch() {
     try {
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",
@@ -76,6 +59,27 @@ async function full() {
     } catch (error) {
         console.error("ERROR:", error)
         throw error
+    }
+}
+
+async function processStream(res) {
+    const stream = await openai.responses.create({
+        model: "gpt-4o-mini",
+        input: [{
+            role: "user",
+            content: prompt
+        }],
+        stream: true
+    })
+    res.writeHead(200, { "Content-Type": "text/plain", "Transfer-Encoding": "chunked"})
+    for await (const event of stream) {
+        if (event.type === "response.output_text.delta") {
+            res.write(event.delta)
+        }
+        if (event.type === "response.output_text.done") { // response.content_part.done, esponse.output_item.done, response.completed
+            console.log("finished streaming request")
+            res.end()
+        }
     }
 }
 
