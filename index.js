@@ -15,6 +15,7 @@ app.use(express.static("public"))
 app.use(bodyParser.json({limit: '50mb', extended: true}))
 
 app.get("/", function(req,res) {
+    console.log("homepage")
     res.type('html').send("<html><body><h1>Hey there</h1></body></html>")
 })
 

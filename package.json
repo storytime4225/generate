@@ -1,5 +1,5 @@
 {
-  "name": "henryheleine.github.io",
+  "name": "storytime4225",
   "version": "2.0.0",
   "description": "render app",
   "main": "index.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/henryheleine/henryheleine.github.io.git"
+    "url": "https://github.com/storytime4225/generate"
   },
   "type": "module",
   "author": "henry heleine",
